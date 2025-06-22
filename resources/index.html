@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servidor HTTP - Proyecto SO</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .subtitle {
+            text-align: center;
+            opacity: 0.8;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+        }
+        .status-card {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #4CAF50;
+        }
+        .links-section {
+            margin: 30px 0;
+        }
+        .link-item {
+            display: block;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .link-item:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateX(10px);
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            opacity: 0.7;
+            font-size: 0.9em;
+        }
+        .emoji {
+            font-size: 1.2em;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Servidor HTTP Multiversión</h1>
+        <p class="subtitle">Proyecto de Sistemas Operativos - Concurrencia y Rendimiento</p>
+        
+        <div class="status-card">
+            <h3><span class="emoji">✅</span>Estado del Servidor</h3>
+            <p>El servidor HTTP está funcionando correctamente y puede manejar múltiples tipos de concurrencia:</p>
+            <ul>
+                <li>🔄 <strong>FIFO</strong> - Un cliente a la vez</li>
+                <li>🧵 <strong>Threaded</strong> - Hilos bajo demanda</li>
+                <li>👷 <strong>Pre-Threaded</strong> - Pool de hilos</li>
+                <li>🧬 <strong>Forked</strong> - Procesos bajo demanda</li>
+                <li>👨‍👧‍👦 <strong>Pre-Forked</strong> - Pool de procesos</li>
+            </ul>
+        </div>
+
+        <div class="links-section">
+            <h3><span class="emoji">📁</span>Archivos de Prueba</h3>
+            <a href="/test.html" class="link-item">
+                <span class="emoji">🌐</span>test.html - Página de prueba completa
+            </a>
+            <a href="/sample.txt" class="link-item">
+                <span class="emoji">📄</span>sample.txt - Archivo de texto plano
+            </a>
+            <a href="/noexiste.html" class="link-item">
+                <span class="emoji">❌</span>Probar página 404 (archivo inexistente)
+            </a>
+        </div>
+
+        <div class="status-card">
+            <h3><span class="emoji">📊</span>Cómo probar el servidor</h3>
+            <p>Puedes usar el cliente de benchmark incluido:</p>
+            <code style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; display: block; margin: 10px 0;">
+                ./client 10 5 test.html [IP_SERVIDOR] 8080
+            </code>
+            <p><small>Esto ejecutará 5 hilos, cada uno haciendo 10 requests al archivo test.html</small></p>
+        </div>
+
+        <div class="footer">
+            <p>Universidad Nacional - Escuela de Informática</p>
+            <p>Sistemas Operativos - I Semestre 2025</p>
+        </div>
+    </div>
+</body>
+</html>

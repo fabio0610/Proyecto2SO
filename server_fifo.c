@@ -8,8 +8,7 @@
 #include <sys/socket.h>
 #include "utils.h"
 
-#define PORT 8080
-#define BUFFER_SIZE 4096
+#define PORT DEFAULT_PORT 
 
 void run_fifo_server() {
     int server_socket, client_socket;
@@ -18,10 +17,9 @@ void run_fifo_server() {
     char buffer[BUFFER_SIZE];
 
     // Crear socket
-    server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    server_socket = create_server_socket(PORT);
     if (server_socket < 0) {
-        perror("Error creando socket");
-        exit(EXIT_FAILURE);
+    exit(EXIT_FAILURE);
     }
 
     // Configurar dirección

@@ -7,8 +7,7 @@
 #include <pthread.h>
 #include "utils.h"
 
-#define PORT 8080
-#define BUFFER_SIZE 4096
+#define PORT DEFAULT_PORT
 
 void *thread_handler(void *arg) {
     int client_socket = *(int *)arg;
@@ -31,25 +30,8 @@ void run_threaded_server() {
     struct sockaddr_in server_addr, client_addr;
     socklen_t addr_size = sizeof(client_addr);
 
-    server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    server_socket = create_server_socket(PORT);
     if (server_socket < 0) {
-        perror("Error creando socket");
-        exit(EXIT_FAILURE);
-    }
-
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = INADDR_ANY;
-
-    if (bind(server_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-        perror("Error en bind");
-        close(server_socket);
-        exit(EXIT_FAILURE);
-    }
-
-    if (listen(server_socket, 50) < 0) {
-        perror("Error en listen");
-        close(server_socket);
         exit(EXIT_FAILURE);
     }
 

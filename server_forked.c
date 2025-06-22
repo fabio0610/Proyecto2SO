@@ -9,8 +9,7 @@
 #include <sys/wait.h>
 #include "utils.h"
 
-#define PORT 8080
-#define BUFFER_SIZE 4096
+#define PORT DEFAULT_PORT
 
 void run_forked_server() {
     int server_socket, client_socket;
@@ -21,26 +20,9 @@ void run_forked_server() {
     signal(SIGCHLD, SIG_IGN);
 
     // Crear socket
-    server_socket = socket(AF_INET, SOCK_STREAM, 0);
+    server_socket = create_server_socket(PORT);
     if (server_socket < 0) {
-        perror("Error creando socket");
-        exit(EXIT_FAILURE);
-    }
-
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = INADDR_ANY;
-
-    if (bind(server_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-        perror("Error en bind");
-        close(server_socket);
-        exit(EXIT_FAILURE);
-    }
-
-    if (listen(server_socket, 20) < 0) {
-        perror("Error en listen");
-        close(server_socket);
-        exit(EXIT_FAILURE);
+    exit(EXIT_FAILURE);
     }
 
     printf("🧬 Servidor Forked escuchando en el puerto %d...\n", PORT);

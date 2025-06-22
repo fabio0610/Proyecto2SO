@@ -6,8 +6,7 @@
 #include <pthread.h>
 #include <arpa/inet.h>
 #include <sys/time.h>
-
-#define BUFFER_SIZE 4096
+#include "utils.h"
 
 typedef struct {
     int T;
@@ -22,7 +21,7 @@ typedef struct {
 
 void *cliente_thread(void *arg) {
     HiloArgs *args = (HiloArgs *)arg;
-    struct timeval start, end;
+    struct timeval start, end, request_start;
 
     for (int i = 0; i < args->T; i++) {
         int sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -46,22 +45,29 @@ void *cliente_thread(void *arg) {
         char request[512];
         snprintf(request, sizeof(request), "GET /%s HTTP/1.1\r\nHost: %s\r\nConnection: close\r\n\r\n", args->recurso, args->ip);
 
+        gettimeofday(&request_start, NULL);
         send(sock, request, strlen(request), 0);
 
-        gettimeofday(&start, NULL);
         char buffer[BUFFER_SIZE];
         long total_bytes = 0;
-        while (recv(sock, buffer, BUFFER_SIZE, 0) > 0)
-            total_bytes += BUFFER_SIZE;
+        int bytes_recibidos;
+
+        // FIX: Contar bytes reales recibidos
+        while ((bytes_recibidos = recv(sock, buffer, BUFFER_SIZE, 0)) > 0) {
+            total_bytes += bytes_recibidos;  // ✅ Suma bytes reales
+        }
+        
         gettimeofday(&end, NULL);
 
-        double tiempo = (end.tv_sec - start.tv_sec) * 1000.0 + (end.tv_usec - start.tv_usec) / 1000.0;
+        double tiempo = (end.tv_sec - request_start.tv_sec) * 1000.0 + (end.tv_usec - request_start.tv_usec) / 1000.0;
         args->tiempos_total[args->id * args->T + i] = tiempo;
         args->bytes[args->id * args->T + i] = total_bytes;
 
         close(sock);
     }
 
+    // FIX: Liberar memoria del thread
+    free(args);
     pthread_exit(NULL);
 }
 

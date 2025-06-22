@@ -1,0 +1,27 @@
+===============================================
+     SERVIDOR HTTP - ARCHIVO DE PRUEBA
+===============================================
+
+Este es un archivo de texto plano para probar
+el funcionamiento del servidor HTTP.
+
+Características del servidor:
+✅ Modo FIFO (secuencial)
+✅ Modo Threaded (hilos bajo demanda) 
+✅ Modo Pre-threaded (pool de hilos)
+✅ Modo Forked (procesos bajo demanda)
+✅ Modo Pre-forked (pool de procesos)
+
+El servidor puede servir cualquier archivo
+desde el directorio ./resources/ de forma
+dinámica.
+
+Puedes agregar o eliminar archivos mientras
+el servidor está ejecutándose.
+
+Fecha de prueba: $(date)
+Tamaño aproximado: ~500 bytes
+
+===============================================
+     FIN DEL ARCHIVO DE PRUEBA
+===============================================
