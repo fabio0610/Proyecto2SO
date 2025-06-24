@@ -52,9 +52,9 @@ void *cliente_thread(void *arg) {
         long total_bytes = 0;
         int bytes_recibidos;
 
-        // FIX: Contar bytes reales recibidos
+        // Contar bytes reales recibidos
         while ((bytes_recibidos = recv(sock, buffer, BUFFER_SIZE, 0)) > 0) {
-            total_bytes += bytes_recibidos;  // ✅ Suma bytes reales
+            total_bytes += bytes_recibidos;
         }
         
         gettimeofday(&end, NULL);
@@ -66,7 +66,7 @@ void *cliente_thread(void *arg) {
         close(sock);
     }
 
-    // FIX: Liberar memoria del thread
+    // Liberar memoria del thread
     free(args);
     pthread_exit(NULL);
 }
@@ -93,10 +93,16 @@ int main(int argc, char *argv[]) {
     int H = atoi(argv[2]);
     int total = T * H;
 
+    // ⏱️ TIEMPO TOTAL - Inicio
+    struct timeval tiempo_inicio, tiempo_fin;
+    gettimeofday(&tiempo_inicio, NULL);
+
     pthread_t hilos[H];
     double *tiempos = malloc(sizeof(double) * total);
     double *esperas = malloc(sizeof(double) * total);
     long *bytes = malloc(sizeof(long) * total);
+
+    printf("🚀 Iniciando %d hilos, cada uno con %d requests (%d total)...\n", H, T, total);
 
     for (int i = 0; i < H; i++) {
         HiloArgs *args = malloc(sizeof(HiloArgs));
@@ -114,6 +120,12 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < H; i++) pthread_join(hilos[i], NULL);
 
+    // ⏱️ TIEMPO TOTAL - Fin
+    gettimeofday(&tiempo_fin, NULL);
+    double tiempo_total_ms = (tiempo_fin.tv_sec - tiempo_inicio.tv_sec) * 1000.0 + 
+                             (tiempo_fin.tv_usec - tiempo_inicio.tv_usec) / 1000.0;
+
+    // Cálculos estadísticos
     double prom_tiempo = calcular_promedio(tiempos, total);
     double var_tiempo = calcular_varianza(tiempos, total, prom_tiempo);
     double prom_espera = calcular_promedio(esperas, total);
@@ -121,14 +133,23 @@ int main(int argc, char *argv[]) {
     long total_bytes = 0;
     for (int i = 0; i < total; i++) total_bytes += bytes[i];
 
-    printf("\n📊 Resultados:\n");
-    printf("Total de solicitudes: %d\n", total);
-    printf("Tiempo atención promedio: %.2f ms\n", prom_tiempo);
-    printf("Varianza atención: %.2f\n", var_tiempo);
-    printf("Tiempo espera promedio: %.2f ms\n", prom_espera);
-    printf("Varianza espera: %.2f\n", var_espera);
-    printf("Bytes totales recibidos: %ld\n", total_bytes);
+    // Métricas adicionales
+    double throughput = total / (tiempo_total_ms / 1000.0);  // requests por segundo
 
-    free(tiempos); free(esperas); free(bytes);
+    printf("\n📊 ===== RESULTADOS FINALES =====\n");
+    printf("Total de solicitudes: %d\n", total);
+    printf("Tiempo total de ejecución: %.2f ms (%.2f segundos)\n", tiempo_total_ms, tiempo_total_ms / 1000.0);
+    printf("Throughput: %.2f requests/segundo\n", throughput);
+    printf("Tiempo atención promedio: %.2f ms\n", prom_tiempo);
+    printf("Varianza tiempo atención: %.2f\n", var_tiempo);
+    printf("Tiempo espera promedio: %.2f ms\n", prom_espera);
+    printf("Varianza tiempo espera: %.2f\n", var_espera);
+    printf("Bytes totales recibidos: %ld bytes (%.2f KB)\n", total_bytes, total_bytes / 1024.0);
+    printf("Bytes promedio por request: %.2f bytes\n", (double)total_bytes / total);
+    printf("=====================================\n");
+
+    free(tiempos); 
+    free(esperas); 
+    free(bytes);
     return 0;
 }
