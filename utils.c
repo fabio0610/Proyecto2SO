@@ -92,41 +92,46 @@ void process_http_request(int client_socket, const char *request) {
 
     // Construir ruta al archivo
     char full_path[512];
-    snprintf(full_path, sizeof(full_path), "%s%s", RESOURCE_DIR, path[1] ? path + 1 : "index.html");
+    snprintf(full_path, sizeof(full_path), "%s%s", RESOURCE_DIR, 
+             path[1] ? path + 1 : "index.html");
 
     // Obtener tamaño del archivo
     struct stat file_stat;
     if (stat(full_path, &file_stat) != 0) {
         printf("❌ Archivo no encontrado: %s\n", full_path);
-        send_404_response(client_socket);  // Usar función agradable
+        send_404_response(client_socket);
         return;
     }
 
-    // Abrir archivo solicitado
-    FILE *file = fopen(full_path, "r");
+    // Abrir archivo en modo binario (funciona para texto e imágenes)
+    FILE *file = fopen(full_path, "rb");
     if (!file) {
         printf("❌ No se pudo abrir archivo: %s\n", full_path);
-        send_404_response(client_socket);  // Usar función agradable
+        send_404_response(client_socket);
         return;
     }
 
-    // Enviar headers con Content-Length
+    // Detectar Content-Type dinámicamente
+    const char *content_type = get_content_type(full_path);
+
+    // Enviar headers con Content-Type dinámico
     char header[512];
     snprintf(header, sizeof(header), 
              "HTTP/1.1 200 OK\r\n"
-             "Content-Type: text/html\r\n"
+             "Content-Type: %s\r\n"
              "Content-Length: %ld\r\n\r\n", 
-             file_stat.st_size);
+             content_type, file_stat.st_size);
     write(client_socket, header, strlen(header));
     
-    // Leer y enviar en bloques (MUY importante para performance)
+    // Leer y enviar en bloques (funciona para cualquier tipo de archivo)
     char buffer[8192];
     size_t bytes_read;
     while ((bytes_read = fread(buffer, 1, sizeof(buffer), file)) > 0) {
         write(client_socket, buffer, bytes_read);
     }
     
-    printf("✅ Archivo servido exitosamente: %s (%ld bytes)\n", full_path, file_stat.st_size);
+    printf("✅ Archivo servido: %s (%ld bytes) - %s\n", 
+           full_path, file_stat.st_size, content_type);
     fclose(file);
 }
 

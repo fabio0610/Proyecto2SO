@@ -22,25 +22,6 @@ void run_fifo_server() {
     exit(EXIT_FAILURE);
     }
 
-    // Configurar dirección
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = INADDR_ANY;
-
-    // Enlazar
-    if (bind(server_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
-        perror("Error en bind");
-        close(server_socket);
-        exit(EXIT_FAILURE);
-    }
-
-    // Escuchar
-    if (listen(server_socket, 10) < 0) {
-        perror("Error en listen");
-        close(server_socket);
-        exit(EXIT_FAILURE);
-    }
-
     printf("🟢 Servidor FIFO escuchando en puerto %d...\n", PORT);
 
     // Bucle principal: un cliente a la vez
